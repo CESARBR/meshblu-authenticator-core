@@ -39,8 +39,9 @@ class DeviceAuthenticator
     @meshbludb.find query, (error, devices=[]) =>
       return callback error if error?
       devices = _.filter devices, (device) =>
-        return false unless @verifySignature device
-        return false unless @verifySecret password + device.uuid, device.secret
+        authData = device[@authenticatorUuid]
+        return false unless @verifySignature authData
+        return false unless @verifySecret password + device.uuid, authData.secret
         return true
 
       callback null, _.first devices

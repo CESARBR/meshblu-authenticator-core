@@ -223,7 +223,7 @@ describe 'Device', ->
     beforeEach ->
       @meshbludb = {}
       @dependencies = meshbludb: @meshbludb
-      @sut = new Device '', '', @dependencies
+      @sut = new Device 'auth-id', '', @dependencies
 
     describe 'when find yields an error', ->
       beforeEach (done) ->
@@ -235,7 +235,13 @@ describe 'Device', ->
         
     describe 'when it finds one device with a valid signature and invalid secret', ->
       beforeEach (done) ->
-        @meshbludb.find = sinon.stub().yields null, [uuid: 1, signature: 2, secret: '######']
+        devices = [
+          uuid: 1,
+          'auth-id': 
+            signature: 2,
+            secret: '######'
+        ]
+        @meshbludb.find = sinon.stub().yields null, devices
         @sut.verifySignature = sinon.stub().returns true
         @sut.verifySecret = sinon.stub().returns false
         @sut.findVerified {something: 'important'}, 'password', (error, @device) => done()
@@ -244,7 +250,7 @@ describe 'Device', ->
         expect(@meshbludb.find).to.have.been.calledWith {something : 'important'} 
 
       it 'should call verifySignature', ->
-        expect(@sut.verifySignature).to.have.been.calledWith uuid: 1, signature: 2, secret: '######'
+        expect(@sut.verifySignature).to.have.been.calledWith signature: 2, secret: '######'
 
       it 'should call verifySecret', ->
         expect(@sut.verifySecret).to.have.been.calledWith 'password' + 1, '######'
@@ -254,7 +260,13 @@ describe 'Device', ->
 
     describe 'when it finds one device with a valid signature and valid secret', ->
       beforeEach (done) ->
-        @meshbludb.find = sinon.stub().yields null, [uuid: 7, signature: 8, secret: '######']
+        devices = [
+          uuid: 7,
+          'auth-id': 
+            signature: 8,
+            secret: '######'
+        ]
+        @meshbludb.find = sinon.stub().yields null, devices
         @sut.verifySignature = sinon.stub().returns true
         @sut.verifySecret = sinon.stub().returns true
         @sut.findVerified {something: 'less-important'}, 'password', (error, @device) => done()
@@ -263,17 +275,23 @@ describe 'Device', ->
         expect(@meshbludb.find).to.have.been.calledWith {something : 'less-important'}
 
       it 'should call verifySignature', ->
-        expect(@sut.verifySignature).to.have.been.calledWith uuid: 7, signature: 8, secret: '######'
+        expect(@sut.verifySignature).to.have.been.calledWith signature: 8, secret: '######'
 
       it 'should call verifySecret', ->
         expect(@sut.verifySecret).to.have.been.calledWith 'password' + 7, '######'
 
       it 'should have one device', ->
-        expect(@device).to.deep.equal uuid: 7, signature: 8, secret: '######'
+        expect(@device).to.deep.equal uuid: 7, 'auth-id': signature: 8, secret: '######'
 
     describe 'when it finds one device with a invalid signature', ->
       beforeEach (done) ->
-        @meshbludb.find = sinon.stub().yields null, [uuid: 7, signature: 8, secret: 8]
+        devices = [
+          uuid: 7,
+          'auth-id': 
+            signature: 8,
+            secret: '######'
+        ]
+        @meshbludb.find = sinon.stub().yields null, devices
         @sut.verifySignature = sinon.stub().returns false
         @sut.verifySecret = sinon.stub().returns false
         @sut.findVerified {something: 'less-important'}, 'password' + 7, (error, @device) => done()
@@ -282,7 +300,7 @@ describe 'Device', ->
         expect(@meshbludb.find).to.have.been.calledWith {something : 'less-important'}
 
       it 'should call verifySignature', ->
-        expect(@sut.verifySignature).to.have.been.calledWith uuid: 7, signature: 8, secret: 8
+        expect(@sut.verifySignature).to.have.been.calledWith signature: 8, secret:'######'
 
       it 'should call verifySecret', ->
         expect(@sut.verifySecret).to.not.have.been.called
@@ -292,7 +310,13 @@ describe 'Device', ->
 
     describe 'when it finds a different valid device', ->
       beforeEach (done) ->
-        @meshbludb.find = sinon.stub().yields null, [uuid: 4, signature: 5, secret: '######']
+        devices = [
+          uuid: 4,
+          'auth-id': 
+            signature: 5,
+            secret: '######'
+        ]
+        @meshbludb.find = sinon.stub().yields null, devices
         @sut.verifySignature = sinon.stub().returns true
         @sut.verifySecret = sinon.stub().returns true
         @sut.findVerified {something: 'more-important'}, 'password', (error, @device) => done()
@@ -301,13 +325,13 @@ describe 'Device', ->
         expect(@meshbludb.find).to.have.been.calledWith {something : 'more-important'}
 
       it 'should call verifySignature', ->
-        expect(@sut.verifySignature).to.have.been.calledWith uuid: 4, signature: 5, secret: '######'
+        expect(@sut.verifySignature).to.have.been.calledWith signature: 5, secret: '######'
 
       it 'should call verifySecret', ->
         expect(@sut.verifySecret).to.have.been.calledWith 'password' + 4, '######'
 
       it 'should have one device', ->
-        expect(@device).to.deep.equal uuid: 4, signature: 5, secret: '######'
+        expect(@device).to.deep.equal uuid: 4, 'auth-id': signature: 5, secret: '######'
 
   describe '->verifySecret', ->
     beforeEach ->
