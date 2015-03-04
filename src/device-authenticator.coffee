@@ -23,6 +23,8 @@ class DeviceAuthenticator
     return deviceUpdate
 
   create: (query, data, user_id, secret, callback=->) =>
+    data.discoverWhitelist = [@authenticatorUuid]
+    data.configureWhitelist = [@authenticatorUuid]
     @insert query, data, (error, device) =>
       return callback error if error?
       @hashSecret secret + device.uuid, (error, hashedSecret) =>

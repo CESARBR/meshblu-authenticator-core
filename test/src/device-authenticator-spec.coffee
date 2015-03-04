@@ -11,7 +11,7 @@ describe 'Device', ->
 
     describe 'when called with data', ->
       beforeEach ->
-        @sut.buildDeviceUpdate "auuid", '1', "pretendyoucantreadthis"
+        @result = @sut.buildDeviceUpdate "auuid", '1', "pretendyoucantreadthis"
 
       it 'should call meshblu.sign', ->
         expect(@meshblu.sign).to.have.been.calledWith {id: '1', name: 'name', secret: 'pretendyoucantreadthis'}
@@ -37,7 +37,7 @@ describe 'Device', ->
         @sut.create 'google.id': '595', {}, 'id', 'secret', (@error) => done()
 
       it 'should call insert', ->
-        expect(@sut.insert).to.have.been.called
+        expect(@sut.insert).to.have.been.calledWith 'google.id': '595', {configureWhitelist: ['auth-id'], discoverWhitelist: ['auth-id']}
 
       it 'should have a device already exists error', ->
         expect(@error.message).to.equal @sut.ERROR_DEVICE_ALREADY_EXISTS
@@ -49,7 +49,8 @@ describe 'Device', ->
         @sut.create 'google.id': '595', {google:{id: 123}}, 'id', 'secret'
 
       it 'should call insert', ->
-        expect(@sut.insert).to.have.been.calledWith 'google.id': '595', {google:{id: 123}}
+        device = {configureWhitelist: ['auth-id'], discoverWhitelist: ['auth-id'], google:{id: 123}}
+        expect(@sut.insert).to.have.been.calledWith 'google.id': '595', device
 
     describe 'when exists yields false and insert yields an error', ->
       beforeEach (done) ->
