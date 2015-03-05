@@ -14,7 +14,7 @@ deploy:
   clean_up: false
   email: serveradmin@octoblu.com
   api_key:
-    secure: kYmDR32n2b7CpglPXKdgk1LcD88mJ1w+GvOm3kcyA5W3MbqmqiIj9GV42TdjOrTH5PKlHW0RKPKa/c8T0Qcq9cu2FJvTsA63H9b8S6QSpxd6b2q+xhrECp3N6njXVVe7FFt2VJt6We+bpzDja5v7Liz7QSTj+nDDTMSSZPEcc5Q=
+    secure: LFhLCSYGCe4vI7vRCQXMySLBqx95mYSPJyHBP0m0+uzwRPRW1uq+ifzmhDxpfrjDGyWdC7sAxKPhczChg9JFweItJx/GkKEwc8yIxmpL1TjjixuRc1IRkmnWEgcD73P6TCBCbgOXH/VWB6Sg8H2fhTO6lofgdnQv/euU3Z9Wwf0=
   on:
     tags: true
     all_branches: true
