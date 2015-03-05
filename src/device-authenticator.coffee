@@ -3,7 +3,7 @@ _ = require 'lodash'
 
 class DeviceAuthenticator
 
-  ERROR_DEVICE_ALREADY_EXISTS : 'device already exists'
+  @ERROR_DEVICE_ALREADY_EXISTS : 'device already exists'
 
   constructor: (@authenticatorUuid, @authenticatorName, dependencies={})->
     @meshbludb = dependencies.meshbludb
@@ -53,7 +53,7 @@ class DeviceAuthenticator
 
   insert: (query, data, callback=->) =>
     @exists query, (deviceExists) =>
-      return callback new Error @ERROR_DEVICE_ALREADY_EXISTS if deviceExists 
+      return callback new Error DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS if deviceExists 
       @meshbludb.insert data, callback
 
   update: (data, callback=->) =>

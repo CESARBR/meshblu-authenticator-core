@@ -1,13 +1,13 @@
-Device = require '../../src/device-authenticator'
+DeviceAuthenticator = require '../../src/device-authenticator'
 bcrypt = require 'bcrypt'
 
-describe 'Device', ->
+describe 'DeviceAuthenticator', ->
   describe '->buildDeviceUpdate', ->
     beforeEach ->
       @meshblu = {}
       @meshblu.sign = sinon.stub()
       @dependencies = {meshblu:@meshblu}
-      @sut = new Device '1', 'name', @dependencies
+      @sut = new DeviceAuthenticator '1', 'name', @dependencies
 
     describe 'when called with data', ->
       beforeEach ->
@@ -20,7 +20,7 @@ describe 'Device', ->
     beforeEach ->
       @meshblu = sinon.stub()
       @dependencies = {meshblu: @meshblu}
-      @sut = new Device 'auth-id', 'authenticator', @dependencies
+      @sut = new DeviceAuthenticator 'auth-id', 'authenticator', @dependencies
 
     describe 'calling exists', ->
       beforeEach ->
@@ -33,14 +33,14 @@ describe 'Device', ->
     describe 'when exists yields true', ->
       beforeEach (done) ->
         @sut.exists = sinon.stub().yields true
-        @sut.insert = sinon.stub().yields new Error @sut.ERROR_DEVICE_ALREADY_EXISTS
+        @sut.insert = sinon.stub().yields new Error DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS
         @sut.create 'google.id': '595', {}, 'id', 'secret', (@error) => done()
 
       it 'should call insert', ->
         expect(@sut.insert).to.have.been.calledWith 'google.id': '595', {configureWhitelist: ['auth-id'], discoverWhitelist: ['auth-id']}
 
       it 'should have a device already exists error', ->
-        expect(@error.message).to.equal @sut.ERROR_DEVICE_ALREADY_EXISTS
+        expect(@error.message).to.equal DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS
 
     describe 'when exists yields false', ->
       beforeEach ->
@@ -102,7 +102,7 @@ describe 'Device', ->
     beforeEach ->
       @meshbludb = {}
       @dependencies = meshbludb: @meshbludb
-      @sut = new Device '', '', @dependencies
+      @sut = new DeviceAuthenticator '', '', @dependencies
 
     describe 'when exists is called', ->
       beforeEach ->
@@ -134,7 +134,7 @@ describe 'Device', ->
       @meshbludb.insert = sinon.stub()
       @meshbludb.findOne = sinon.stub().yields()
       @dependencies = {meshbludb:@meshbludb}
-      @sut = new Device '', '', @dependencies
+      @sut = new DeviceAuthenticator '', '', @dependencies
 
     describe 'when insert is called', ->
       beforeEach (done) ->
@@ -160,7 +160,7 @@ describe 'Device', ->
 
   describe '->hashSecret', ->
     beforeEach ->
-      @sut = new Device {}
+      @sut = new DeviceAuthenticator {}
 
     describe 'when hashSecret is called', ->
       beforeEach (done) ->
@@ -181,7 +181,7 @@ describe 'Device', ->
       @meshbludb = {}
       @meshbludb.update = sinon.stub()
       @dependencies = {meshbludb:@meshbludb}
-      @sut = new Device '', '', @dependencies
+      @sut = new DeviceAuthenticator '', '', @dependencies
 
     describe 'when update yields an error', ->
       beforeEach (done) ->
@@ -204,7 +204,7 @@ describe 'Device', ->
       @meshblu = {}
       @meshblu.verify = sinon.spy()
       @dependencies = {meshblu: @meshblu}
-      @sut = new Device '', '', @dependencies
+      @sut = new DeviceAuthenticator '', '', @dependencies
 
     describe 'when called', ->
       beforeEach ->
@@ -224,7 +224,7 @@ describe 'Device', ->
     beforeEach ->
       @meshbludb = {}
       @dependencies = meshbludb: @meshbludb
-      @sut = new Device 'auth-id', '', @dependencies
+      @sut = new DeviceAuthenticator 'auth-id', '', @dependencies
 
     describe 'when find yields an error', ->
       beforeEach (done) ->
@@ -336,7 +336,7 @@ describe 'Device', ->
 
   describe '->verifySecret', ->
     beforeEach ->
-      @sut = new Device '', ''
+      @sut = new DeviceAuthenticator '', ''
 
     describe 'when called with valid secret', ->
       beforeEach ->
