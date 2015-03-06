@@ -16,6 +16,9 @@ describe 'DeviceAuthenticator', ->
       it 'should call meshblu.sign', ->
         expect(@meshblu.sign).to.have.been.calledWith {id: '1', name: 'name', secret: 'pretendyoucantreadthis'}
 
+      it 'should set the owner', ->
+        expect(@result.owner).to.equal "auuid"
+
   describe '->create', ->
     beforeEach ->
       @meshblu = sinon.stub()
@@ -93,7 +96,7 @@ describe 'DeviceAuthenticator', ->
         @sut.create 'google.id': '595', {}, '1', 'secret', (@error, @device) => done()
 
       it 'should call update', ->
-        expect(@sut.update).to.have.been.calledWith {uuid: 'wobbly-table', 'auth-id': {name : 'authenticator', id: '1', secret: '$$$$$$$$$$', signature: 'trust-me'}}
+        expect(@sut.update).to.have.been.calledWith {uuid: 'wobbly-table', owner: 'wobbly-table', 'auth-id': {name : 'authenticator', id: '1', secret: '$$$$$$$$$$', signature: 'trust-me'}}
 
       it 'should yield the device', ->
         expect(@device).to.deep.equal {uuid: 'wobbly-table'}

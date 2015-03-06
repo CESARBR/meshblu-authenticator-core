@@ -18,6 +18,7 @@ class DeviceAuthenticator
     signature = @meshblu.sign(data)
     deviceUpdate = {
       uuid: deviceUuid
+      owner: deviceUuid
     }
     deviceUpdate[@authenticatorUuid] = _.defaults({signature: signature}, data)
     return deviceUpdate
