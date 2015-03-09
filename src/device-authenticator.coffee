@@ -5,32 +5,30 @@ class DeviceAuthenticator
 
   @ERROR_DEVICE_ALREADY_EXISTS : 'device already exists'
   @ERROR_DEVICE_NOT_FOUND : 'device not found'
-
+  @ERROR_CANNOT_WRITE_TO_DEVICE : 'cannot write to device'
   constructor: (@authenticatorUuid, @authenticatorName, dependencies={})->
     @meshbludb = dependencies.meshbludb
     @meshblu = dependencies.meshblu
 
-  buildDeviceUpdate: (deviceUuid, user_id, hashedSecret, discoverWhitelist=[], configureWhitelist=[]) =>
+  buildDeviceUpdate: (deviceUuid, user_id, hashedSecret) =>
     data = {
       id: user_id
       name: @authenticatorName
       secret: hashedSecret
     }
     signature = @meshblu.sign(data)
-    discoverWhitelist.push(@authenticatorUuid)
-    configureWhitelist.push(@authenticatorUuid)
 
     deviceUpdate = {
       uuid: deviceUuid
       owner: deviceUuid
-      discoverWhitelist: discoverWhitelist
-      configureWhitelist: configureWhitelist
     }
 
     deviceUpdate[@authenticatorUuid] = _.defaults({signature: signature}, data)
     return deviceUpdate
 
   create: (query, data, user_id, secret, callback=->) =>
+    data.discoverWhitelist = [@authenticatorUuid]
+    data.configureWhitelist = [@authenticatorUuid]
     @insert query, data, (error, device) =>
       return callback error if error?
       @writeAuthData(device.uuid, device, user_id, secret, callback)
@@ -39,15 +37,18 @@ class DeviceAuthenticator
     @exists query, (deviceExists) =>
       return callback new Error DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS if deviceExists
       @meshbludb.findOne {uuid: uuid}, (error, device) =>
-        return callback new Error DeviceAuthenticator.ERROR_NOT_FOUND unless device?
+        return callback new Error DeviceAuthenticator.ERROR_DEVICE_NOT_FOUND if error?
         @writeAuthData(uuid, device, user_id, secret, callback)
 
   writeAuthData: (uuid, data, user_id, secret, callback=->) =>
      @hashSecret secret + uuid, (error, hashedSecret) =>
         return callback error if error?
-        updateData = @buildDeviceUpdate(uuid, user_id, hashedSecret, data.discoverWhitelist, data.configureWhitelist)
+        updateData = @buildDeviceUpdate(uuid, user_id, hashedSecret)
+        console.log updateData
         @update updateData, (error, device) =>
-          callback error, data
+          console.log error
+          return callback new Error DeviceAuthenticator.ERROR_CANNOT_WRITE_TO_DEVICE if error?
+          callback null, data
 
 
   exists: (query, callback=->) =>
