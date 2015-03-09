@@ -40,7 +40,7 @@ describe 'DeviceAuthenticator', ->
         @sut.create 'google.id': '595', {}, 'id', 'secret', (@error) => done()
 
       it 'should call insert', ->
-        expect(@sut.insert).to.have.been.calledWith 'google.id': '595', {configureWhitelist: ['auth-id'], discoverWhitelist: ['auth-id']}
+        expect(@sut.insert).to.have.been.calledWith 'google.id': '595', {}
 
       it 'should have a device already exists error', ->
         expect(@error.message).to.equal DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS
@@ -52,14 +52,14 @@ describe 'DeviceAuthenticator', ->
         @sut.create 'google.id': '595', {google:{id: 123}}, 'id', 'secret'
 
       it 'should call insert', ->
-        device = {configureWhitelist: ['auth-id'], discoverWhitelist: ['auth-id'], google:{id: 123}}
+        device = { google:{id: 123} }
         expect(@sut.insert).to.have.been.calledWith 'google.id': '595', device
 
     describe 'when exists yields false and insert yields an error', ->
       beforeEach (done) ->
         @sut.exists = sinon.stub().yields false
         @sut.insert = sinon.stub().yields new Error
-        @sut.create 'google.id': '595', {}, 'id', 'secret', (@error) => done()
+        @sut.create 'google.id': '595', {  configureWhitelist: ["auth-id"], discoverWhitelist: ["auth-id"] }, 'id', 'secret', (@error) => done()
 
       it 'should have an error', ->
         expect(@error).to.exist
@@ -96,7 +96,7 @@ describe 'DeviceAuthenticator', ->
         @sut.create 'google.id': '595', {}, '1', 'secret', (@error, @device) => done()
 
       it 'should call update', ->
-        expect(@sut.update).to.have.been.calledWith {uuid: 'wobbly-table', owner: 'wobbly-table', 'auth-id': {name : 'authenticator', id: '1', secret: '$$$$$$$$$$', signature: 'trust-me'}}
+        expect(@sut.update).to.have.been.calledWith {uuid: 'wobbly-table', owner: 'wobbly-table', configureWhitelist: ["auth-id"], discoverWhitelist: ["auth-id"], 'auth-id': {name : 'authenticator', id: '1', secret: '$$$$$$$$$$', signature: 'trust-me'}}
 
       it 'should yield the device', ->
         expect(@device).to.deep.equal {uuid: 'wobbly-table'}
@@ -236,12 +236,12 @@ describe 'DeviceAuthenticator', ->
 
       it 'should yield an error', ->
         expect(@error).to.exist
-        
+
     describe 'when it finds one device with a valid signature and invalid secret', ->
       beforeEach (done) ->
         devices = [
           uuid: 1,
-          'auth-id': 
+          'auth-id':
             signature: 2,
             secret: '######'
         ]
@@ -251,7 +251,7 @@ describe 'DeviceAuthenticator', ->
         @sut.findVerified {something: 'important'}, 'password', (error, @device) => done()
 
       it 'should call meshblu.find', ->
-        expect(@meshbludb.find).to.have.been.calledWith {something : 'important'} 
+        expect(@meshbludb.find).to.have.been.calledWith {something : 'important'}
 
       it 'should call verifySignature', ->
         expect(@sut.verifySignature).to.have.been.calledWith signature: 2, secret: '######'
@@ -266,7 +266,7 @@ describe 'DeviceAuthenticator', ->
       beforeEach (done) ->
         devices = [
           uuid: 7,
-          'auth-id': 
+          'auth-id':
             signature: 8,
             secret: '######'
         ]
@@ -291,7 +291,7 @@ describe 'DeviceAuthenticator', ->
       beforeEach (done) ->
         devices = [
           uuid: 7,
-          'auth-id': 
+          'auth-id':
             signature: 8,
             secret: '######'
         ]
@@ -316,7 +316,7 @@ describe 'DeviceAuthenticator', ->
       beforeEach (done) ->
         devices = [
           uuid: 4,
-          'auth-id': 
+          'auth-id':
             signature: 5,
             secret: '######'
         ]
@@ -354,5 +354,5 @@ describe 'DeviceAuthenticator', ->
 
       it 'should return false', ->
         expect(@result).to.be.false
-      
+
 
