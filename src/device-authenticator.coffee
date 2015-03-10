@@ -10,7 +10,7 @@ class DeviceAuthenticator
     @meshbludb = dependencies.meshbludb
     @meshblu = dependencies.meshblu
 
-  buildDeviceUpdate: (deviceUuid, user_id, hashedSecret) =>
+  buildDeviceUpdate: (deviceUuid, owner, user_id, hashedSecret) =>
     data = {
       id: user_id
       name: @authenticatorName
@@ -20,7 +20,7 @@ class DeviceAuthenticator
 
     deviceUpdate = {
       uuid: deviceUuid
-      owner: deviceUuid
+      owner: owner
     }
 
     deviceUpdate[@authenticatorUuid] = _.defaults({signature: signature}, data)
@@ -31,24 +31,24 @@ class DeviceAuthenticator
     data.configureWhitelist = [@authenticatorUuid]
     @insert query, data, (error, device) =>
       return callback error if error?
-      @writeAuthData(device.uuid, device, user_id, secret, callback)
+      @writeAuthData device.uuid, device.uuid, user_id, secret, (error) =>
+        callback(error, device)
 
   addAuth: (query, uuid, user_id, secret, callback=->) =>
     @exists query, (deviceExists) =>
       return callback new Error DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS if deviceExists
       @meshbludb.findOne {uuid: uuid}, (error, device) =>
         return callback new Error DeviceAuthenticator.ERROR_DEVICE_NOT_FOUND if error?
-        @writeAuthData(uuid, device, user_id, secret, callback)
+        @writeAuthData uuid, device.owner, user_id, secret, (error) =>
+          callback(error, device)
 
-  writeAuthData: (uuid, data, user_id, secret, callback=->) =>
+  writeAuthData: (uuid, owner, user_id, secret, callback=->) =>
      @hashSecret secret + uuid, (error, hashedSecret) =>
         return callback error if error?
-        updateData = @buildDeviceUpdate(uuid, user_id, hashedSecret)
-        console.log updateData
+        updateData = @buildDeviceUpdate(uuid, owner, user_id, hashedSecret)
         @update updateData, (error, device) =>
-          console.log error
           return callback new Error DeviceAuthenticator.ERROR_CANNOT_WRITE_TO_DEVICE if error?
-          callback null, data
+          callback null, device
 
 
   exists: (query, callback=->) =>

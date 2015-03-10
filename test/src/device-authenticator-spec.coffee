@@ -11,7 +11,7 @@ describe 'DeviceAuthenticator', ->
 
     describe 'when called with data', ->
       beforeEach ->
-        @result = @sut.buildDeviceUpdate "auuid", '1', "pretendyoucantreadthis"
+        @result = @sut.buildDeviceUpdate "auuid", "auuid", '1', "pretendyoucantreadthis"
 
       it 'should call meshblu.sign', ->
         expect(@meshblu.sign).to.have.been.calledWith {id: '1', name: 'name', secret: 'pretendyoucantreadthis'}
