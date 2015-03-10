@@ -197,10 +197,10 @@ describe 'DeviceAuthenticator', ->
     describe 'when update is called', ->
       beforeEach (done) ->
         @meshbludb.update.yields null
-        @sut.update {some: 'stuff'}, (@error) => done()
+        @sut.update {, uuid: 'hi!', some: 'stuff'}, (@error) => done()
 
       it 'should get called with stuff', ->
-        expect(@meshbludb.update).to.have.been.calledWith {some: 'stuff'}
+        expect(@meshbludb.update).to.have.been.calledWith {uuid: 'hi!'}, {some: 'stuff', uuid: 'hi!'}
 
   describe '->verifySignature', ->
     beforeEach ->

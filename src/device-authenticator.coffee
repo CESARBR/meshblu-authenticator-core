@@ -75,7 +75,7 @@ class DeviceAuthenticator
       @meshbludb.insert data, callback
 
   update: (data, callback=->) =>
-    @meshbludb.update data, callback
+    @meshbludb.update {uuid: data.uuid}, data, callback
 
   verifySignature: (data) =>
     @meshblu.verify _.omit(data, 'signature'), data.signature
