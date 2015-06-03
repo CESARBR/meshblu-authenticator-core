@@ -4,9 +4,9 @@ bcrypt = require 'bcrypt'
 describe 'DeviceAuthenticator', ->
   describe '->buildDeviceUpdate', ->
     beforeEach ->
-      @meshblu = {}
-      @meshblu.sign = sinon.stub()
-      @dependencies = {meshblu:@meshblu}
+      @meshbludb = {}
+      @meshbludb.sign = sinon.stub()
+      @dependencies = {meshbludb:@meshbludb}
       @sut = new DeviceAuthenticator '1', 'name', @dependencies
 
     describe 'when called with data', ->
@@ -14,15 +14,15 @@ describe 'DeviceAuthenticator', ->
         @result = @sut.buildDeviceUpdate "auuid", "auuid", '1', "pretendyoucantreadthis"
 
       it 'should call meshblu.sign', ->
-        expect(@meshblu.sign).to.have.been.calledWith {id: '1', name: 'name', secret: 'pretendyoucantreadthis'}
+        expect(@meshbludb.sign).to.have.been.calledWith {id: '1', name: 'name', secret: 'pretendyoucantreadthis'}
 
       it 'should set the owner', ->
         expect(@result.owner).to.equal "auuid"
 
   describe '->create', ->
     beforeEach ->
-      @meshblu = sinon.stub()
-      @dependencies = {meshblu: @meshblu}
+      @meshbludb = sinon.stub()
+      @dependencies = {meshbludb: @meshbludb}
       @sut = new DeviceAuthenticator 'auth-id', 'authenticator', @dependencies
 
     describe 'calling exists', ->
@@ -66,7 +66,7 @@ describe 'DeviceAuthenticator', ->
 
     describe 'when exists yields false and insert yields a device', ->
       beforeEach (done) ->
-        @meshblu.sign = sinon.stub().returns 'trust-me'
+        @meshbludb.sign = sinon.stub().returns 'trust-me'
         @sut.exists = sinon.stub().yields false
         @sut.insert = sinon.stub().yields null, {uuid: 'wobbly-table'}
         @sut.hashSecret = sinon.stub().yields null
@@ -88,7 +88,7 @@ describe 'DeviceAuthenticator', ->
 
     describe 'when exists yields false and insert yields a device and hashSecret yields a secret', ->
       beforeEach (done) ->
-        @meshblu.sign = sinon.stub().returns 'trust-me'
+        @meshbludb.sign = sinon.stub().returns 'trust-me'
         @sut.exists = sinon.stub().yields false
         @sut.insert = sinon.stub().yields null, {uuid: 'wobbly-table'}
         @sut.hashSecret = sinon.stub().yields null, '$$$$$$$$$$'
@@ -206,9 +206,9 @@ describe 'DeviceAuthenticator', ->
 
   describe '->verifySignature', ->
     beforeEach ->
-      @meshblu = {}
-      @meshblu.verify = sinon.spy()
-      @dependencies = {meshblu: @meshblu}
+      @meshbludb = {}
+      @meshbludb.verify = sinon.spy()
+      @dependencies = {meshbludb: @meshbludb}
       @sut = new DeviceAuthenticator '', '', @dependencies
 
     describe 'when called', ->
@@ -216,14 +216,14 @@ describe 'DeviceAuthenticator', ->
         @sut.verifySignature id: 'foo', signature: 'this-is-my-rifle'
 
       it 'should meshblu.verify', ->
-        expect(@meshblu.verify).to.have.been.calledWith {id: 'foo'}, 'this-is-my-rifle'
+        expect(@meshbludb.verify).to.have.been.calledWith {id: 'foo'}, 'this-is-my-rifle'
 
     describe 'when called with a different device', ->
       beforeEach ->
         @sut.verifySignature id: 'bar', signature: 'this-is-my-gun'
 
       it 'should meshblu.verify', ->
-        expect(@meshblu.verify).to.have.been.calledWith {id: 'bar'}, 'this-is-my-gun'
+        expect(@meshbludb.verify).to.have.been.calledWith {id: 'bar'}, 'this-is-my-gun'
 
   describe '->findVerified', ->
     beforeEach ->
@@ -356,5 +356,3 @@ describe 'DeviceAuthenticator', ->
 
       it 'should return false', ->
         expect(@result).to.be.false
-
-

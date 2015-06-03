@@ -6,9 +6,9 @@ class DeviceAuthenticator
   @ERROR_DEVICE_ALREADY_EXISTS : 'device already exists'
   @ERROR_DEVICE_NOT_FOUND : 'device not found'
   @ERROR_CANNOT_WRITE_TO_DEVICE : 'cannot write to device'
+  
   constructor: (@authenticatorUuid, @authenticatorName, dependencies={})->
     @meshbludb = dependencies.meshbludb
-    @meshblu = dependencies.meshblu
 
   buildDeviceUpdate: (deviceUuid, owner, user_id, hashedSecret) =>
     data = {
@@ -16,7 +16,7 @@ class DeviceAuthenticator
       name: @authenticatorName
       secret: hashedSecret
     }
-    signature = @meshblu.sign(data)
+    signature = @meshbludb.sign(data)
 
     deviceUpdate = {
       uuid: deviceUuid
@@ -78,7 +78,7 @@ class DeviceAuthenticator
     @meshbludb.update {uuid: data.uuid}, data, callback
 
   verifySignature: (data) =>
-    @meshblu.verify _.omit(data, 'signature'), data.signature
+    @meshbludb.verify _.omit(data, 'signature'), data.signature
 
   verifySecret: (secret, hash) =>
     bcrypt.compareSync secret, hash
