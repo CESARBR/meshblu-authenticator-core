@@ -3,20 +3,20 @@ language: node_js
 node_js:
 - '5'
 env:
-  - CXX=g++-4.8
+- CXX=g++-4.8
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
+    - g++-4.8
 deploy:
   provider: npm
   skip_cleanup: true
   clean_up: false
   email: serveradmin@octoblu.com
   api_key:
-    secure: Tv9HhnIjNklDyrTvzUTlKv64cc+I8giA6gcnzpE1mUEKgxJsMIcxIaoTDRrX3a7EpysLRZAtT6ub8qVKKOVUgUfdnVNIZ9Q3jAdSKqH8rr2AJTpAKtEXrQapMNWfPdpDYn/Ys3fiWp9stEAWka1QP8DL7JBZCaOmsNKlm3OM+YI=
+    secure: kp5mq1LrM0d+cQyF1BPZSEuyn4e0siXNXJ/McJajXr8+KggrwB0QaHFpAdcJsLgjOkdD9BtR2leQBB+kZ2iF05bo0EXBkBFtnBnWzIwKuYQQ7yt1jTlnE1Flxd7M8K0h1Pow4NIXst/tQdygPD6IMGYF9R/j23mj+FrkzX7wVik=
   on:
     tags: true
     all_branches: true
