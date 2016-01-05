@@ -1,13 +1,7 @@
 sudo: false
 language: node_js
-cache:
-  bundler: true
-  directories:
-    - node_modules
-notifications:
-  flowdock: e7454f5285e7b9ab67009802d5560490
 node_js:
-- '0.10'
+- '5'
 deploy:
   provider: npm
   skip_cleanup: true
