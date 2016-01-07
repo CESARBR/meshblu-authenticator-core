@@ -78,7 +78,8 @@ class DeviceAuthenticator
     @meshbludb.update {uuid: data.uuid}, data, callback
 
   verifySignature: (data) =>
-    @meshbludb.verify _.omit(data, 'signature'), data?.signature
+    return false unless data?.signature?
+    @meshbludb.verify _.omit(data, 'signature'), data.signature
 
   verifySecret: (secret, hash) =>
     bcrypt.compareSync secret, hash
