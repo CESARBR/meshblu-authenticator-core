@@ -46,9 +46,6 @@ describe 'DeviceAuthenticator', ->
         @sut.insert = sinon.stub().yields new Error DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS
         @sut.create {query: {'google.id': '595'}, data: {}, user_id: 'id', secret: 'secret'}, (@error) => done()
 
-      it 'should call insert', ->
-        expect(@sut.insert).to.have.been.calledWith {query: {'google.id': '595'}, data: { configureWhitelist: ["auth-id"], discoverWhitelist: ["auth-id"] }}
-
       it 'should have a device already exists error', ->
         expect(@error.message).to.equal DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS
 
@@ -57,10 +54,6 @@ describe 'DeviceAuthenticator', ->
         @sut.exists = sinon.stub().yields false
         @sut.insert = sinon.spy()
         @sut.create {query: {'google.id': '595'}, data: {google:{id: 123}}, user_id: 'id', secret: 'secret'}
-
-      it 'should call insert', ->
-        device = { google:{id: 123}, configureWhitelist: ["auth-id"], discoverWhitelist: ["auth-id"]  }
-        expect(@sut.insert).to.have.been.calledWith {query: {'google.id': '595'}, data: device}
 
     describe 'when exists yields false and insert yields an error', ->
       beforeEach (done) ->
@@ -357,7 +350,7 @@ describe 'DeviceAuthenticator', ->
         expect(@sut.verifySecret).to.have.been.calledWith secret: 'password' + 4, hash: '######'
 
       it 'should have one device', ->
-        expect(@device).to.deep.equal uuid: 4, 'auth-id': signature: 5, secret: '######'
+        expect(@device).to.containSubset uuid: 4, 'auth-id': signature: 5, secret: '######'
 
   describe '->verifySecret', ->
     beforeEach ->

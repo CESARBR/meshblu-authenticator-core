@@ -27,6 +27,8 @@ class DeviceAuthenticator
   create: ({query, data, user_id, secret}, callback) =>
     data.discoverWhitelist = [@authenticatorUuid]
     data.configureWhitelist = [@authenticatorUuid]
+    data[@authenticatorUuid] ?= {}
+    data[@authenticatorUuid].createdAt = new Date
     @insert {query, data}, (error, device) =>
       return callback error if error?
       @writeAuthData {uuid: device.uuid, owner: device.uuid, user_id, secret}, (error) =>
