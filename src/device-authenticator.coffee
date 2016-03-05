@@ -8,7 +8,7 @@ class DeviceAuthenticator
 
   constructor: ({@authenticatorUuid, @authenticatorName, @meshbluHttp})->
 
-  buildDeviceUpdate: ({deviceUuid, owner, user_id, hashedSecret}) =>
+  buildDeviceUpdate: ({owner, user_id, hashedSecret}) =>
     data = {
       id: user_id
       name: @authenticatorName
@@ -17,7 +17,6 @@ class DeviceAuthenticator
     signature = @meshbluHttp.sign(data)
 
     deviceUpdate = {
-      uuid: deviceUuid
       owner: owner
     }
 
@@ -45,7 +44,7 @@ class DeviceAuthenticator
   writeAuthData: ({uuid, owner, user_id, secret}, callback) =>
      @hashSecret {secret: secret + uuid}, (error, hashedSecret) =>
         return callback error if error?
-        updateData = @buildDeviceUpdate({deviceUuid: uuid, owner, user_id, hashedSecret})
+        updateData = @buildDeviceUpdate({owner, user_id, hashedSecret})
         @update {uuid: uuid, data: updateData}, (error, device) =>
           return callback new Error DeviceAuthenticator.ERROR_CANNOT_WRITE_TO_DEVICE if error?
           callback null, device

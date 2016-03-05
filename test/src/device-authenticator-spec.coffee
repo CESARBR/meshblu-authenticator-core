@@ -96,7 +96,7 @@ describe 'DeviceAuthenticator', ->
         @sut.create {query: {'google.id': '595'}, data: {}, user_id: '1', secret: 'secret'}, (@error, @device) => done()
 
       it 'should call update', ->
-        expect(@sut.update).to.have.been.calledWith uuid: 'wobbly-table', data: {uuid: 'wobbly-table', owner: 'wobbly-table', 'auth-id': {name : 'authenticator', id: '1', secret: '$$$$$$$$$$', signature: 'trust-me'}}
+        expect(@sut.update).to.have.been.calledWith uuid: 'wobbly-table', data: {owner: 'wobbly-table', 'auth-id': {name : 'authenticator', id: '1', secret: '$$$$$$$$$$', signature: 'trust-me'}}
 
       it 'should yield the device', ->
         expect(@device).to.deep.equal {uuid: 'wobbly-table'}
