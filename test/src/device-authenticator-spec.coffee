@@ -115,12 +115,32 @@ describe 'DeviceAuthenticator', ->
         expect(@meshbluHttp.devices).to.have.been.calledWith 'google.id': '123'
 
     describe 'when findOne yields a device', ->
-      beforeEach (done) ->
-        @meshbluHttp.devices.yields null, [uuid: 'label-maker']
-        @sut.exists query: {'google.id' : '12350'}, (error, @exists) => done error
+      beforeEach ->
+        firstDevice  = uuid: 'label-maker', '1': {user_id: '123', signature: 'aaron-in-cursive'}
+        secondDevice = uuid: 'label-maker', '1': {user_id: '123', signature: 'aaron-in-sanscrit'}
+        @meshbluHttp.devices.yields null, [firstDevice, secondDevice]
 
-      it 'should have an device', ->
-        expect(@exists).to.be.true
+      describe 'when the devices do not have valid signatures', ->
+        beforeEach (done) ->
+          @meshbluHttp.verify = sinon.stub().returns false
+          @sut.exists query: {'google.id' : '12350'}, (error, @exists) => done error
+
+        it 'should call meshbluHttp.verify with the find device data', ->
+          expect(@meshbluHttp.verify).to.have.been.calledWith {user_id: '123'}, 'aaron-in-cursive'
+
+        it 'should have a device', ->
+          expect(@exists).to.be.false
+
+      describe 'when the devices do have valid signatures', ->
+        beforeEach (done) ->
+          @meshbluHttp.verify = sinon.stub().returns true
+          @sut.exists query: {'google.id' : '12350'}, (error, @exists) => done error
+
+        it 'should call meshbluHttp.verify with the find device data', ->
+          expect(@meshbluHttp.verify).to.have.been.calledWith {user_id: '123'}, 'aaron-in-cursive'
+
+        it 'should have a device', ->
+          expect(@exists).to.be.true
 
     describe 'when exists yields nothing', ->
       beforeEach (done) ->
@@ -270,11 +290,10 @@ describe 'DeviceAuthenticator', ->
       it 'should call verifySignature', ->
         expect(@sut.verifySignature).to.have.been.calledWith data: {signature: 2, secret: '######'}
 
-
       it 'should call verifySecret', ->
         expect(@sut.verifySecret).to.have.been.calledWith secret: 'password' + 1, hash: '######'
 
-      it 'should have one device', ->
+      it 'should not have a device', ->
         expect(@device).to.not.exist
 
     describe 'when it finds one device with a valid signature and valid secret', ->

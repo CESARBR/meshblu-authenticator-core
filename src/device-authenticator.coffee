@@ -52,6 +52,9 @@ class DeviceAuthenticator
   exists: ({query}, callback) =>
     @meshbluHttp.devices query, (error, devices) =>
       return callback error if error?
+      devices = _.filter devices, (device) =>
+        @verifySignature data: device[@authenticatorUuid]
+
       callback null, ! _.isEmpty devices
 
   findVerified: ({query, password}, callback) =>
