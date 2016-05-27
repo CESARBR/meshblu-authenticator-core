@@ -9,6 +9,7 @@ describe 'DeviceAuthenticator', ->
       register: sinon.stub()
       update: sinon.stub()
       verify: sinon.stub()
+      search: sinon.stub()
 
   describe '->buildDeviceUpdate', ->
     beforeEach ->
@@ -265,7 +266,7 @@ describe 'DeviceAuthenticator', ->
 
     describe 'when find yields an error', ->
       beforeEach (done) ->
-        @meshbluHttp.devices.yields new Error
+        @meshbluHttp.search.yields new Error
         @sut.findVerified query: {}, password: 'password', (@error) => done()
 
       it 'should yield an error', ->
@@ -279,13 +280,13 @@ describe 'DeviceAuthenticator', ->
             signature: 2,
             secret: '######'
         ]
-        @meshbluHttp.devices.yields null, devices
+        @meshbluHttp.search.yields null, devices
         @sut.verifySignature = sinon.stub().returns true
         @sut.verifySecret = sinon.stub().returns false
         @sut.findVerified query: {something: 'important'}, password: 'password', (error, @device) => done()
 
-      it 'should call meshblu.devices', ->
-        expect(@meshbluHttp.devices).to.have.been.calledWith {something : 'important'}
+      it 'should call meshblu.search', ->
+        expect(@meshbluHttp.search).to.have.been.calledWith {something : 'important'}
 
       it 'should call verifySignature', ->
         expect(@sut.verifySignature).to.have.been.calledWith data: {signature: 2, secret: '######'}
@@ -304,13 +305,13 @@ describe 'DeviceAuthenticator', ->
             signature: 8,
             secret: '######'
         ]
-        @meshbluHttp.devices.yields null, devices
+        @meshbluHttp.search.yields null, devices
         @sut.verifySignature = sinon.stub().returns true
         @sut.verifySecret = sinon.stub().returns true
         @sut.findVerified query: {something: 'less-important'}, password: 'password', (error, @device) => done()
 
-      it 'should call meshblu.find', ->
-        expect(@meshbluHttp.devices).to.have.been.calledWith {something : 'less-important'}
+      it 'should call meshblu.search', ->
+        expect(@meshbluHttp.search).to.have.been.calledWith {something : 'less-important'}
 
       it 'should call verifySignature', ->
         expect(@sut.verifySignature).to.have.been.calledWith data: {signature: 8, secret: '######'}
@@ -329,13 +330,13 @@ describe 'DeviceAuthenticator', ->
             signature: 8,
             secret: '######'
         ]
-        @meshbluHttp.devices.yields null, devices
+        @meshbluHttp.search.yields null, devices
         @sut.verifySignature = sinon.stub().returns false
         @sut.verifySecret = sinon.stub().returns false
         @sut.findVerified query: {something: 'less-important'}, password: 'password' + 7, (error, @device) => done()
 
-      it 'should call meshblu.find', ->
-        expect(@meshbluHttp.devices).to.have.been.calledWith {something : 'less-important'}
+      it 'should call meshblu.search', ->
+        expect(@meshbluHttp.search).to.have.been.calledWith {something : 'less-important'}
 
       it 'should call verifySignature', ->
         expect(@sut.verifySignature).to.have.been.calledWith data: {signature: 8, secret:'######'}
@@ -354,13 +355,13 @@ describe 'DeviceAuthenticator', ->
             signature: 5,
             secret: '######'
         ]
-        @meshbluHttp.devices.yields null, devices
+        @meshbluHttp.search.yields null, devices
         @sut.verifySignature = sinon.stub().returns true
         @sut.verifySecret = sinon.stub().returns true
         @sut.findVerified query: {something: 'more-important'}, password: 'password', (error, @device) => done()
 
-      it 'should call meshblu.find', ->
-        expect(@meshbluHttp.devices).to.have.been.calledWith {something : 'more-important'}
+      it 'should call meshblu.search', ->
+        expect(@meshbluHttp.search).to.have.been.calledWith {something : 'more-important'}
 
       it 'should call verifySignature', ->
         expect(@sut.verifySignature).to.have.been.calledWith data: {signature: 5, secret: '######'}
