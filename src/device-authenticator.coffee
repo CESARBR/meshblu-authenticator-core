@@ -58,7 +58,10 @@ class DeviceAuthenticator
       callback null, ! _.isEmpty devices
 
   findVerified: ({query, password}, callback) =>
-    @meshbluHttp.devices query, (error, devices) =>
+    projection =
+      uuid: true
+      "#{@authenticatorUuid}": true
+    @meshbluHttp.search query, {projection}, (error, devices) =>
       return callback error if error?
       devices = _.filter devices, (device) =>
         authData = device[@authenticatorUuid]
