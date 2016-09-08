@@ -24,8 +24,16 @@ class DeviceAuthenticator
     return deviceUpdate
 
   create: ({query, data, user_id, secret}, callback) =>
-    data.discoverWhitelist = [@authenticatorUuid]
-    data.configureWhitelist = [@authenticatorUuid]
+    data = _.cloneDeep data
+    data.meshblu = {
+      version: '2.0.0'
+      whitelists:
+        configure:
+          update: [{uuid: @authenticatorUuid}]
+        discover:
+          view: [{uuid: @authenticatorUuid}]
+    }
+
     data[@authenticatorUuid] ?= {}
     data[@authenticatorUuid].createdAt = new Date
     @insert {query, data}, (error, device) =>
