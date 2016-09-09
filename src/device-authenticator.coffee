@@ -2,8 +2,8 @@ bcrypt = require 'bcrypt'
 _ = require 'lodash'
 
 class DeviceAuthenticator
-  @ERROR_DEVICE_ALREADY_EXISTS : 'device already exists'
-  @ERROR_DEVICE_NOT_FOUND : 'device not found'
+  @ERROR_DEVICE_ALREADY_EXISTS :  'device already exists'
+  @ERROR_DEVICE_NOT_FOUND :       'device not found'
   @ERROR_CANNOT_WRITE_TO_DEVICE : 'cannot write to device'
 
   constructor: ({@authenticatorUuid, @authenticatorName, @meshbluHttp})->
@@ -24,7 +24,7 @@ class DeviceAuthenticator
     return deviceUpdate
 
   create: ({query, data, user_id, secret}, callback) =>
-    data = _.cloneDeep data
+    data = _.cloneDeep(data ? {})
     data.meshblu = {
       version: '2.0.0'
       whitelists:
