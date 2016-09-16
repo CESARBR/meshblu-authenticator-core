@@ -7,4 +7,6 @@
 [![Slack Status](http://community-slack.octoblu.com/badge.svg)](http://community-slack.octoblu.com)
 
 [![NPM](https://nodei.co/npm/meshblu-authenticator-core.svg?style=flat)](https://npmjs.org/package/meshblu-authenticator-core)
+[![Dependency status](http://img.shields.io/david/octoblu/meshblu-authenticator-core.svg?style=flat)](https://david-dm.org/octoblu/meshblu-authenticator-core)
+
 You must set a ```privateKey``` and ```publicKey``` on your meshblu device
