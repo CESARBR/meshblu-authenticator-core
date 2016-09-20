@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha -- -R spec --require coffee-coverage/register-istanbul && mocha --reporter json > coverage/mocha.json"
+    "test": "mocha",
+    "coverage": "nyc npm test",
+    "mocha:json": "env NPM_ENV=test mocha --reporter json > coverage/mocha.json",
+    "test:watch": "mocha -w -R mocha-multi --reporter-options spec=-,mocha-osx-reporter=-"
   },
   "repository": {
     "type": "git",
@@ -28,7 +31,21 @@
     "chai-subset": "^1.2.0",
     "coffee-script": "^1.9.1",
     "mocha": "^2.1.0",
+    "mocha-multi": "^0.9.1",
+    "mocha-osx-reporter": "^0.1.2",
+    "nyc": "^8.3.0",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.7.0"
+  },
+  "nyc": {
+    "cache": true,
+    "reporter": [
+      "text-summary",
+      "lcov",
+      "json"
+    ],
+    "extension": [
+      ".coffee"
+    ]
   }
 }
