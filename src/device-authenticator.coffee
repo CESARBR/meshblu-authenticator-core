@@ -44,11 +44,12 @@ class DeviceAuthenticator
         callback(error, device)
 
   addAuth: ({query, uuid, user_id, secret}, callback) =>
-    @exists {query}, (deviceExists) =>
+    @exists {query}, (error, deviceExists) =>
+      return callback error if error?
       return callback new Error DeviceAuthenticator.ERROR_DEVICE_ALREADY_EXISTS if deviceExists
       @meshbluHttp.device uuid, (error, device) =>
         return callback new Error DeviceAuthenticator.ERROR_DEVICE_NOT_FOUND if error?
-        @writeAuthData uuid, device.owner, user_id, secret, (error) =>
+        @writeAuthData {uuid: uuid, owner: device.owner, user_id, secret}, (error) =>
           callback(error, device)
 
   writeAuthData: ({uuid, owner, user_id, secret}, callback) =>
