@@ -1,30 +1,3 @@
-sudo: false
 language: node_js
 node_js:
-- '5'
-env:
-- CXX=g++-4.8
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.8
-deploy:
-  provider: npm
-  skip_cleanup: true
-  clean_up: false
-  email: serveradmin@octoblu.com
-  api_key:
-    secure: CRaem1S7vre4FXdMGZLL5eMe3lD09XGMAXF2nMil2DjkKsw9xQlG+LJFl+FSvmk3jZf9Z1D6akpVQ+11yvS0/lkBG5GK2oNHYsNsFWd0mBRldctCIsXgxRpaHxaLDb6DP6oAfV+NjYhlCE7ClEVvAU1CQhN6TPPVsGFlOpF2sIA=
-  on:
-    tags: true
-    all_branches: true
-after_success:
-- npm run coverage
-- npm run mocha:json
-- bash <(curl -s https://codecov.io/bash)
-- bash <(curl -s https://codecov.octoblu.com/bash)
-branches:
-  only:
-  - "/^v[0-9]/"
+- '10.9.0'
